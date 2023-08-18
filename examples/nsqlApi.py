@@ -57,7 +57,7 @@ def get_sagemaker_sql_350M() -> str:
     instruction = req['instruction']
     max_tokens = req['max_tokens']
     prompt = temp.formatter.format_prompt(instruction)
-    predictor = HuggingFacePredictor(endpoint_name="huggingface-pytorch-inference-2023-08-17-16-05-15-899")
+    predictor = HuggingFacePredictor(endpoint_name="huggingface-pytorch-inference-2023-08-18-15-05-27-193")
     return predictor.predict({'inputs': prompt,
                   'parameters': {'max_length': max_tokens,
                                  'min_length': 1}})
@@ -68,7 +68,7 @@ def get_sagemaker_sql_2B() -> str:
     instruction = req['instruction']
     max_tokens = req['max_tokens']
     prompt = temp.formatter.format_prompt(instruction)
-    predictor = HuggingFacePredictor(endpoint_name="huggingface-pytorch-tgi-inference-2023-08-18-06-26-02-249")
+    predictor = HuggingFacePredictor(endpoint_name="huggingface-pytorch-tgi-inference-2023-08-18-15-05-29-108")
     return predictor.predict({'inputs': prompt,
                   'parameters': {'max_length': max_tokens,
                                  'min_length': 1}})
@@ -81,4 +81,4 @@ def filter_tables() -> str:
     return json.dumps(temp.table_filter)
 
 if __name__ == '__main__':
-    app.run(port=5004)
+    app.run(port=5003)
