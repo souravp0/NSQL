@@ -2,6 +2,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from functools import cached_property
 from typing import Any, Generator, List
+from sqlalchemy import inspect
 import pandas as pd
 import sqlalchemy
 
@@ -17,13 +18,14 @@ class PostgresConnector:
     dbname: str
     host: str
     port: int
+    search_schema: str
 
     @cached_property
     def pg_uri(self) -> str:
         """Get Postgres URI."""
         uri = (
             f"postgresql://"
-            f"{self.user}:{self.password}@{self.host}:{self.port}/{self.dbname}"
+            f"{self.user}:{self.password}@{self.host}:{self.port}/{self.dbname}?options=-csearch_path%3D{self.search_schema}"
         )
         # ensure we can actually connect to this postgres uri
         engine = sqlalchemy.create_engine(uri)
@@ -63,9 +65,18 @@ class PostgresConnector:
     def get_tables(self) -> List[str]:
         """Get all tables in the database."""
         engine = sqlalchemy.create_engine(self.pg_uri)
-        table_names = engine.table_names()
+        insp = inspect(engine)
+        table_names = insp.get_table_names()
         engine.dispose()
         return table_names
+
+    def get_views(self) -> List[str]:
+        """Get all views in the database."""
+        engine = sqlalchemy.create_engine(self.pg_uri)
+        insp = inspect(engine)
+        view_names = insp.get_view_names()
+        engine.dispose()
+        return view_names
 
     def get_schema(self, table: str) -> Table:
         """Return Table."""
