@@ -7,3 +7,6 @@ jsonlines>=3.1.0
 sqlglot==11.5.5
 psycopg2-binary==2.9.7
 pydantic==1.10.12
+sagemaker==2.177.1
+pyOpenSSL==23.2.0
+cryptography==41.0.3
