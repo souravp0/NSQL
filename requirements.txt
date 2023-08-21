@@ -5,3 +5,5 @@ transformers>=4.29.0
 datasets==2.11.0
 jsonlines>=3.1.0
 sqlglot==11.5.5
+psycopg2-binary==2.9.7
+pydantic==1.10.12

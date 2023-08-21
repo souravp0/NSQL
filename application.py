@@ -5,7 +5,7 @@ from manifest import Manifest
 from flask import Flask, request
 import json
 
-app = Flask(__name__)
+application = Flask(__name__)
 
 class Temp:
     formatter = None
@@ -14,11 +14,11 @@ class Temp:
 
 temp = Temp()
 
-@app.route('/', methods=['GET'])
+@application.route('/', methods=['GET'])
 def index():
     return "Hello, World!"
 
-@app.route('/connect', methods=['POST'])
+@application.route('/connect', methods=['POST'])
 def create_connection() -> str:
     req = request.get_json()
     USER = req['user']
@@ -51,7 +51,7 @@ def get_sql(instruction: str, max_tokens: int = 300) -> str:
     res = manifest_client.run(prompt, max_tokens=max_tokens)
     return temp.formatter.format_model_output(res)
 
-@app.route('/query350M', methods=['POST'])
+@application.route('/query350M', methods=['POST'])
 def get_sagemaker_sql_350M() -> str:
     req = request.get_json()
     instruction = req['instruction']
@@ -62,7 +62,7 @@ def get_sagemaker_sql_350M() -> str:
                   'parameters': {'max_length': max_tokens,
                                  'min_length': 1}})
 
-@app.route('/query2B', methods=['POST'])
+@application.route('/query2B', methods=['POST'])
 def get_sagemaker_sql_2B() -> str:
     req = request.get_json()
     instruction = req['instruction']
@@ -73,7 +73,7 @@ def get_sagemaker_sql_2B() -> str:
                   'parameters': {'max_length': max_tokens,
                                  'min_length': 1}})
 
-@app.route('/filterTables', methods=['POST'])
+@application.route('/filterTables', methods=['POST'])
 def filter_tables() -> str:
     req = request.get_json()
     filter_tables = req['tables']
@@ -81,4 +81,4 @@ def filter_tables() -> str:
     return json.dumps(temp.table_filter)
 
 if __name__ == '__main__':
-    app.run(port=5003)
+    application.run(port=5003)
