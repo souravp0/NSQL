@@ -75,6 +75,25 @@ class RajkumarFormatter:
         sql_prefix = "SELECT"
         return f"""{self.table_str}\n\n\n-- Using valid SQLite, answer the following questions for the tables provided above.\n\n-- {instruction}\n{sql_prefix}"""  # noqa: E501
 
+    def format_prompt_sqlcoder(self, instruction: str):
+        prompt = """### Instructions:
+        Your task is convert a question into a SQL query, given a Postgres database schema.
+        Adhere to these rules:
+        - **Deliberately go through the question and database schema word by word** to appropriately answer the question
+        - **Use Table Aliases** to prevent ambiguity. For example, `SELECT table1.col1, table2.col1 FROM table1 JOIN table2 ON table1.id = table2.id`.
+        - When creating a ratio, always cast the numerator as float
+
+        ### Input:
+        Generate a SQL query that answers the questioq `{question}`.
+        This query will run on a database whose schema is represented in this string:
+        `{schema}`
+
+        ### Response:
+        Based on your instructions, here is the SQL query I have generated to answer the question `{question}`:
+        ```sql
+        """.format(question=instruction, schema=self.table_str)
+        return prompt
+
     def format_model_output(self, output_sql: str) -> str:
         """Format model output.
 

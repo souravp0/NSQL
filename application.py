@@ -1,5 +1,5 @@
 from db_connectors import PostgresConnector
-from model_loader import generateQuery
+from model_loader import generateQueryUsingSqlCoder
 from prompt_formatters import RajkumarFormatter
 from manifest import Manifest
 from flask import Flask, request
@@ -97,8 +97,8 @@ def get_sql() -> str:
     max_tokens = req['max_tokens']
 
     try:
-        prompt = temp.formatter.format_prompt(instruction)
-        return generateQuery(prompt, max_tokens)
+        prompt = temp.formatter.format_prompt_sqlcoder(instruction)
+        return generateQueryUsingSqlCoder(prompt, max_tokens)
 
     except Exception as e:
         print(f"Got Exception {e=}, {type(e)=}")
