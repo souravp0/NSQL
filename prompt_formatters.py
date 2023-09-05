@@ -75,7 +75,7 @@ class RajkumarFormatter:
         sql_prefix = "SELECT"
         return f"""{self.table_str}\n\n\n-- Using valid SQLite, answer the following questions for the tables provided above.\n\n-- {instruction}\n{sql_prefix}"""  # noqa: E501
 
-    def format_prompt_sqlcoder(self, instruction: str):
+    def format_prompt_sqlcoder(self, instruction: str, specialInstruction: str):
         prompt = """### Instructions:
         Your task is convert a question into a SQL query, given a Postgres database schema.
         Adhere to these rules:
@@ -84,14 +84,15 @@ class RajkumarFormatter:
         - When creating a ratio, always cast the numerator as float
 
         ### Input:
-        Generate a SQL query that answers the questioq `{question}`.
+        Generate a SQL query that answers the question `{question}`.
         This query will run on a database whose schema is represented in this string:
         `{schema}`
+        `{specialInstruction}`
 
         ### Response:
         Based on your instructions, here is the SQL query I have generated to answer the question `{question}`:
         ```sql
-        """.format(question=instruction, schema=self.table_str)
+        """.format(question=instruction, schema=self.table_str, specialInstruction=specialInstruction)
         return prompt
 
     def format_model_output(self, output_sql: str) -> str:

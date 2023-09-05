@@ -20,7 +20,7 @@ class SqlCoder:
         self.model = AutoModelForCausalLM.from_pretrained(
             model_name,
             trust_remote_code=True,
-            # torch_dtype=torch.bfloat16,
+            torch_dtype=torch.bfloat16,
             load_in_8bit=True,
             #     load_in_4bit=True,
             device_map="auto",

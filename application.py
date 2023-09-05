@@ -90,15 +90,24 @@ def get_sql(instruction: str, max_tokens: int = 300) -> str:
     return temp.formatter.format_model_output(res)
 
 
+class SqlCoderResponse:
+    prompt = None
+    response = None
+
 @application.route('/query', methods=['POST'])
 def get_sql() -> str:
     req = request.get_json()
     instruction = req['instruction']
     max_tokens = req['max_tokens']
+    special_instructions = req['special_instructions']
 
     try:
-        prompt = temp.formatter.format_prompt_sqlcoder(instruction)
-        return generateQueryUsingSqlCoder(prompt, max_tokens)
+        prompt = temp.formatter.format_prompt_sqlcoder(instruction, special_instructions)
+        res = generateQueryUsingSqlCoder(prompt, max_tokens)
+        sqlCoderRes = SqlCoderResponse()
+        sqlCoderRes.response = res
+        sqlCoderRes.prompt = prompt
+        return sqlCoderRes
 
     except Exception as e:
         print(f"Got Exception {e=}, {type(e)=}")
@@ -123,7 +132,7 @@ def filter_tables() -> str:
         db_schema = [temp.postgres_connector.get_schema(table) for table in final_tables]
         temp.formatter = RajkumarFormatter(db_schema)
 
-    return json.dumps(temp.table_filter)
+    return json.dumps(temp.formatter.table_str)
 
 
 if __name__ == '__main__':
