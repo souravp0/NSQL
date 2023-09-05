@@ -7,6 +7,7 @@ import json
 
 application = Flask(__name__)
 
+
 class Temp:
     def __init__(self):
         USER = 'gpt_user'
@@ -34,6 +35,7 @@ class Temp:
     formatter = None
     table_filter = []
     postgres_connector = None
+
 
 temp = Temp()
 
@@ -90,12 +92,8 @@ def get_sql(instruction: str, max_tokens: int = 300) -> str:
     return temp.formatter.format_model_output(res)
 
 
-class SqlCoderResponse:
-    prompt = None
-    response = None
-
 @application.route('/query', methods=['POST'])
-def get_sql() -> str:
+def get_sql() -> dict:
     req = request.get_json()
     instruction = req['instruction']
     max_tokens = req['max_tokens']
@@ -103,15 +101,12 @@ def get_sql() -> str:
 
     try:
         prompt = temp.formatter.format_prompt_sqlcoder(instruction, special_instructions)
-        res = generateQueryUsingSqlCoder(prompt, max_tokens)
-        sqlCoderRes = SqlCoderResponse()
-        sqlCoderRes.response = res
-        sqlCoderRes.prompt = prompt
-        return sqlCoderRes
+        query = generateQueryUsingSqlCoder(prompt, max_tokens)
+        res = {'query': query, 'prompt': prompt}
+        return res
 
     except Exception as e:
         print(f"Got Exception {e=}, {type(e)=}")
-
 
 
 @application.route('/filterTables', methods=['POST'])
