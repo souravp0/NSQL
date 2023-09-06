@@ -1,3 +1,5 @@
+import base64
+
 from db_connectors import PostgresConnector
 from model_loader import generateQueryUsingSqlCoder
 from prompt_formatters import RajkumarFormatter
@@ -6,7 +8,6 @@ from flask import Flask, request
 import json
 
 application = Flask(__name__)
-
 
 class Temp:
     def __init__(self):
@@ -108,14 +109,19 @@ def get_sql() -> dict:
     except Exception as e:
         print(f"Got Exception {e=}, {type(e)=}")
 
+
 @application.route('/queryDirect', methods=['POST'])
-def get_sql() -> dict:
+def get_sql_direct() -> dict:
     req = request.get_json()
     prompt = req['prompt']
     max_tokens = req['max_tokens']
 
     try:
-        query = generateQueryUsingSqlCoder(prompt, max_tokens)
+        # Decode the Base64-encoded string
+        decoded_bytes = base64.b64decode(prompt)
+        # Convert the decoded bytes to a string (assuming it's text data)
+        decoded_string = decoded_bytes.decode('utf-8')
+        query = generateQueryUsingSqlCoder(decoded_string, max_tokens)
         res = {'query': query, 'prompt': prompt}
         return res
 
