@@ -108,6 +108,19 @@ def get_sql() -> dict:
     except Exception as e:
         print(f"Got Exception {e=}, {type(e)=}")
 
+@application.route('/queryDirect', methods=['POST'])
+def get_sql() -> dict:
+    req = request.get_json()
+    prompt = req['prompt']
+    max_tokens = req['max_tokens']
+
+    try:
+        query = generateQueryUsingSqlCoder(prompt, max_tokens)
+        res = {'query': query, 'prompt': prompt}
+        return res
+
+    except Exception as e:
+        print(f"Got Exception {e=}, {type(e)=}")
 
 @application.route('/filterTables', methods=['POST'])
 def filter_tables() -> str:
