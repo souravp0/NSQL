@@ -117,11 +117,7 @@ def get_sql_direct() -> dict:
     max_tokens = req['max_tokens']
 
     try:
-        # Decode the Base64-encoded string
-        decoded_bytes = base64.b64decode(prompt)
-        # Convert the decoded bytes to a string (assuming it's text data)
-        decoded_string = decoded_bytes.decode('utf-8')
-        query = generateQueryUsingSqlCoder(decoded_string, max_tokens)
+        query = generateQueryUsingSqlCoder(prompt, max_tokens)
         res = {'query': query, 'prompt': prompt}
         return res
 
